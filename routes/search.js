@@ -31,6 +31,7 @@ router.post('/', function (req, res, next) {
                     for (var i = 0; i < place.length; i++) {
                         var placeInfo = {
                             "id": place[i].id,
+                            "brief":place[i].brief,
                             "street": place[i].street,
                             "city": place[i].city,
                             "state": place[i].state,
