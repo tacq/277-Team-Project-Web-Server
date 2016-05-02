@@ -13,7 +13,6 @@ router.post('/', function (req, res, next) {
     var searchTxt = req.param("searchTxt");
     var locationTxt = req.param("locationTxt");
     var propertyType = req.param("propertyType");
-    console.log(req.getParameter);
     var response = {};
 
     mongo.connect(mongoURL, function () {
