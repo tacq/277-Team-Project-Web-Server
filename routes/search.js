@@ -13,24 +13,21 @@ router.post('/', function (req, res, next) {
     var searchTxt = req.param("searchTxt");
     var locationTxt = req.param("locationTxt");
     var propertyType = req.param("propertyType");
+    var username = req.param("username");
     var response = {};
 
     mongo.connect(mongoURL, function () {
-        console.log('Connected to mongo at: ' + mongoURL);
         var coll = mongo.collection('placeInfo');
-        console.log(1);
         coll.find({
             property: propertyType
         }).toArray(
             function (err, place) {
-
                 if (place) {
-                    console.log("mongodb success");
                     response.code = "success";
                     for (var i = 0; i < place.length; i++) {
                         var placeInfo = {
                             "id": place[i].id,
-                            "brief":place[i].brief,
+                            "brief": place[i].brief,
                             "street": place[i].street,
                             "city": place[i].city,
                             "state": place[i].state,
@@ -38,21 +35,32 @@ router.post('/', function (req, res, next) {
                             "property": place[i].property,
                             "rooms": place[i].rooms,
                             "price": place[i].price,
-                            "phone":place[i].phone,
-                            "email":place[i].email,
-                            "description":place[i].description
+                            "phone": place[i].phone,
+                            "email": place[i].email,
+                            "description": place[i].description
                         };
                         placeList.push(placeInfo);
                     }
-                    console.log(placeList);
-                    response.value = placeList;
-                    res.send(response);
-                    placeList=[]
+                    var coll2 = mongo.collection('favorite');
+                    coll2.findOne({username: username}, function (err, favorites) {
+                        if (!err) {
+                            console.log("1");
+                            if (favorites == null) {
+                                response.favorite = ["null"];
+                            } else {
+                                response.favorite = favorites.favoriteList;
+                            }
+                            response.value = placeList;
+                            res.send(response);
+                            placeList = []
+                        } else {
+                            console.log(err);
+                        }
+                    });
                 } else {
                     console.log(err);
                 }
             });
-        console.log("2");
     });
 
 })
